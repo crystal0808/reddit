@@ -13,12 +13,6 @@ class App extends Component {
         };
     }
 
-    handleComment(text) {
-        //   message.info('您选择的日期是: ' + (date ? date.toString() : ''));
-        //    this.setState({ date });
-        console.log(text);
-    }
-
     render() {
         const columns = [{
             title: 'Name',
@@ -90,7 +84,7 @@ class App extends Component {
                     </div>
                 </Content>
                 <Footer style={{textAlign: 'center'}}>
-                    Ant Design ©2018 Created by Ant UED
+                    Reddit test ©2018 Created by Crystal L
                 </Footer>
             </Layout>
         );
