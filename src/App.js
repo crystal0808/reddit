@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Table, Layout, Menu, Breadcrumb} from 'antd';
+import {Table, Layout, Menu, Breadcrumb, Tabs} from 'antd';
 
 const {Header, Content, Footer} = Layout;
+const TabPane = Tabs.TabPane;
 
 class App extends Component {
     constructor(props) {
@@ -10,6 +11,24 @@ class App extends Component {
         this.state = {
             data: [],
         };
+    }
+
+    callback(key) {
+        console.log(key);
+        let query = 'hot';
+        if (key == 2) {
+            query = 'new';
+        } else if (key == 3) {
+            query = 'top';
+        }
+        let url = "https://www.reddit.com/r/subreddit/" + query + ".json";
+        fetch(url).then(res => res.json()).then((result) => {
+            console.log(result.data.children)
+                this.setState({
+                    data: result.data.children,
+                })
+            }
+        )
     }
 
     render() {
@@ -20,26 +39,24 @@ class App extends Component {
             width: '7%',
             render: (data) => (
                 <span>
-                    <img color="blue" alt="" src={data.thumbnail} height={data.thumbnail_height}
-                         width={data.thumbnail_width}></img>
+                    <img color="blue" alt="" src={data.thumbnail} height= '70'
+                         width='70'></img>
                 </span>
             ),
         }, {
             title: 'title',
             dataIndex: 'data',
             key: 'title',
-            width: '60%',
+            width: '90%',
             render: (data) => {
                 let link = "https://www.reddit.com/r/subreddit/comments/" + data.id;
-                return (<a href={link}>{data.title}</a>)
+                return (<div>
+                    <a href={link}>{data.title}</a>
+                    <div>{data.num_comments} comments</div>
+                    </div>
+                )
             }
-        }, {
-            title: 'num_comments',
-            dataIndex: 'data.num_comments',
-            key: 'num_comments',
-            width: '10%',
-            render: text => <div>{text}</div>,
-        },];
+        }, ];
         return (
             <Layout className="layout">
                 <Header>
@@ -55,14 +72,20 @@ class App extends Component {
                         <Menu.Item key="3">nav 3</Menu.Item>
                     </Menu>
                 </Header>
-                <Content style={{padding: '0 50px'}}>
-                    <Breadcrumb style={{margin: '16px 0'}}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>Reddit List Table</Breadcrumb.Item>
-                    </Breadcrumb>
+                <Content >
                     <div style={{background: '#fff', padding: 24, minHeight: 280}}>
-                        <Table columns={columns} dataSource={this.state.data}/>
+                        <Tabs defaultActiveKey="1" onChange={this.callback.bind(this)}>
+                            <TabPane tab="Hot" key="1">
+                                <Table showHeader = {false} columns={columns} dataSource={this.state.data}/>
+                            </TabPane>
+                            <TabPane tab="New" key="2">
+                                <Table showHeader = {false} columns={columns} dataSource={this.state.data}/>
+                            </TabPane>
+                            <TabPane tab="Top" key="3">
+                                <Table showHeader = {false} columns={columns} dataSource={this.state.data}/>
+                            </TabPane>
+                        </Tabs>
+
                     </div>
                 </Content>
                 <Footer style={{textAlign: 'center'}}>
