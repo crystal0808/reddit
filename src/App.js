@@ -13,9 +13,10 @@ class App extends Component {
         };
     }
 
-    handleChange(date) {
+    handleComment(text) {
         //   message.info('您选择的日期是: ' + (date ? date.toString() : ''));
         //    this.setState({ date });
+        console.log(text);
     }
 
     render() {
@@ -24,7 +25,7 @@ class App extends Component {
             dataIndex: 'data.author_fullname',
             key: 'author_fullname',
             width: 200,
-            render: text => <a href="javascript:;">{text}</a>,
+            render: text => <div>{text}</div>,
         }, {
             title: 'thumbnail',
             key: 'thumbnail',
@@ -40,30 +41,26 @@ class App extends Component {
             dataIndex: 'data.title',
             key: 'title',
             width: 300,
-            render: text => <a href="javascript:;">{text}</a>,
+            render: text => <div>{text}</div>,
         }, {
             title: 'num_comments',
             dataIndex: 'data.num_comments',
             key: 'num_comments',
-            width: 10,
-            render: text => <a href="javascript:;">{text}</a>,
-        },{
+            width: 100,
+            render: text => <div>{text}</div>,
+        }, {
             title: 'id',
             dataIndex: 'data.id',
             key: 'id',
             width: 300,
-            render: text => <a href="javascript:;">{text}</a>,
-        },  {
-            title: 'subreddit_subscribers',
-            key: 'subreddit_subscribers',
-            width: 200,
-            render: (text, record) => (
-                <span>
-      <a href="javascript:;">Invite {record.name}</a>
-      <Divider type="vertical"/>
-      <a href="javascript:;">Delete</a>
-    </span>
-            ),
+            render: (text) => {
+                let link = "https://www.reddit.com/r/subreddit/comments/" + text;
+                console.log(text)
+                console.log(link)
+                return (
+                    <a href={link}>{text}</a>
+                )
+            }
         }];
         return (
 
