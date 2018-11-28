@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Table, Divider, Tag, Layout, Menu, Breadcrumb} from 'antd';
+import {Table, Layout, Menu, Breadcrumb} from 'antd';
 
 const {Header, Content, Footer} = Layout;
-
 
 class App extends Component {
     constructor(props) {
@@ -15,50 +14,33 @@ class App extends Component {
 
     render() {
         const columns = [{
-            title: 'Name',
-            dataIndex: 'data.author_fullname',
-            key: 'author_fullname',
-            width: 200,
-            render: text => <div>{text}</div>,
-        }, {
             title: 'thumbnail',
             key: 'thumbnail',
-            dataIndex: 'data.thumbnail',
-            width: 100,
-            render: thumbnail => (
+            dataIndex: 'data',
+            width: '7%',
+            render: (data) => (
                 <span>
-      <img color="blue" src={thumbnail} height="42" width="42"></img>
-    </span>
+                    <img color="blue" alt="" src={data.thumbnail} height={data.thumbnail_height}
+                         width={data.thumbnail_width}></img>
+                </span>
             ),
         }, {
             title: 'title',
-            dataIndex: 'data.title',
+            dataIndex: 'data',
             key: 'title',
-            width: 300,
-            render: text => <div>{text}</div>,
+            width: '60%',
+            render: (data) => {
+                let link = "https://www.reddit.com/r/subreddit/comments/" + data.id;
+                return (<a href={link}>{data.title}</a>)
+            }
         }, {
             title: 'num_comments',
             dataIndex: 'data.num_comments',
             key: 'num_comments',
-            width: 100,
+            width: '10%',
             render: text => <div>{text}</div>,
-        }, {
-            title: 'id',
-            dataIndex: 'data.id',
-            key: 'id',
-            width: 300,
-            render: (text) => {
-                let link = "https://www.reddit.com/r/subreddit/comments/" + text;
-                console.log(text)
-                console.log(link)
-                return (
-                    <a href={link}>{text}</a>
-                )
-            }
-        }];
+        },];
         return (
-
-
             <Layout className="layout">
                 <Header>
                     <div className="logo"/>
@@ -77,7 +59,7 @@ class App extends Component {
                     <Breadcrumb style={{margin: '16px 0'}}>
                         <Breadcrumb.Item>Home</Breadcrumb.Item>
                         <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>App</Breadcrumb.Item>
+                        <Breadcrumb.Item>Reddit List Table</Breadcrumb.Item>
                     </Breadcrumb>
                     <div style={{background: '#fff', padding: 24, minHeight: 280}}>
                         <Table columns={columns} dataSource={this.state.data}/>
@@ -93,7 +75,6 @@ class App extends Component {
 
     componentDidMount() {
         fetch("https://www.reddit.com/r/subreddit/new.json?sort=new").then(res => res.json()).then((result) => {
-                console.log(result.data.children);
                 this.setState({
                     data: result.data.children,
                 })
