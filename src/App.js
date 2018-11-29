@@ -38,7 +38,7 @@ class App extends Component {
         super(props);
         this.state = {
             data: [],
-            subreddit: 'xxx',
+            subreddit: 'popular',
             sortBy: 'new',
         };
     }
@@ -61,6 +61,7 @@ class App extends Component {
     getTableData() {
         let subreddit = this.state.subreddit;
         let sortBy = this.state.sortBy;
+        console.log("inside getTableData")
         console.log(subreddit)
         let url = "https://www.reddit.com/r/" + subreddit + "/" + sortBy + ".json";
         console.log(url)
@@ -75,27 +76,33 @@ class App extends Component {
     callbackMenu(e) {
         console.log(e.key);
         let subreddit = this.state.subreddit;
-        let sortBy = this.state.sortBy;
+        //let sortBy = this.state.sortBy;
         console.log(subreddit)
         if (e.key == 1) {
             subreddit = 'popular';
+          this.setState({ subreddit: 'popular' }, () => { this.getTableData() })
+
         }
         else if (e.key == 2) {
             subreddit = 'all';
+          this.setState({ subreddit: 'all' }, () => { this.getTableData() })
+
+        
         } else if (e.key == 3) {
+          console.log("sssff")
             //get random subreddit
             let url4Random = "https://www.reddit.com/r/all/random.json";
             fetch(url4Random).then(res => res.json()).then((result) => {
                     console.log(result)
                     subreddit = result[0].data.children[0].data.subreddit;
                     console.log(subreddit)
+                    this.setState({ subreddit: subreddit, sortBy: 'hot' }, function () { this.getTableData() })
                 }
             )
         }
         console.log(subreddit)
-      //  this.setState({subreddit: subreddit}, function(){this.getTableData()})
       //  this.getTableData(subreddit, sortBy);
-        this.setState({subreddit: subreddit});
+       // this.setState({subreddit: subreddit});
 
     }
 
@@ -112,9 +119,9 @@ class App extends Component {
                     style={{lineHeight: '64px'}}
                     onClick={this.callbackMenu.bind(this)}
                 >
-                    <Menu.Item key="1"><Link to="/popular">Popular</Link><div hidden = 'true'></div></Menu.Item>
-                    <Menu.Item key="2"><Link to="/all">ALL</Link></Menu.Item>
-                    <Menu.Item key="3">RANDOM</Menu.Item>
+                    <Menu.Item key="1">Popular</Menu.Item>
+                    <Menu.Item key="2">ALL</Menu.Item>
+                    <Menu.Item key='3'>RANDOM</Menu.Item>
                 </Menu>
                 <Content >
                     <div  style={{background: '#fff', padding: 24, minHeight: 280}}>
