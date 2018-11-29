@@ -8,31 +8,7 @@ import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import {withRouter} from 'react-router-dom' ;
 const {Header, Content, Footer} = Layout;
 const TabPane = Tabs.TabPane;
-const columns = [{
-    title: 'thumbnail',
-    key: 'thumbnail',
-    dataIndex: 'data',
-    width: '7%',
-    render: (data) => (
-        <span>
-                    <img color="blue" alt="" src={data.thumbnail} height='70'
-                         width='70'></img>
-                </span>
-    ),
-}, {
-    title: 'title',
-    dataIndex: 'data',
-    key: 'title',
-    width: '90%',
-    render: (data) => {
-        let link = "https://www.reddit.com/r/subreddit/comments/" + data.id;
-        return (<div>
-                <a href={link}>{data.title}</a>
-                <div>{data.num_comments} comments</div>
-            </div>
-        )
-    }
-},];
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -109,7 +85,33 @@ class App extends Component {
 
 
     render() {
-
+        var cur = this.state.subreddit;
+        const columns = [{
+            title: 'thumbnail',
+            key: 'thumbnail',
+            dataIndex: 'data',
+            width: '7%',
+            render: (data) => (
+                <span>
+                    <img color="blue" alt="" src={data.thumbnail} height='70'
+                         width='70'></img>
+                </span>
+            ),
+        }, {
+            title: 'title',
+            dataIndex: 'data',
+            key: 'title',
+            width: '90%',
+            render: (data) => {
+                let link = "https://www.reddit.com/r/" + data.subreddit + "/comments/" + data.id;
+                console.log(link)
+                return (<div>
+                        <a href={link}>{data.title}</a>
+                        <div>{data.num_comments} comments</div>
+                    </div>
+                )
+            }
+        },];
         return (
             <Layout className="layout">
                 <Menu
