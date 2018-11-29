@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
-import {Table, Layout, Menu, Tabs} from 'antd';
+import {Table, Layout, Menu} from 'antd';
 import {Link} from "react-router-dom";
-
-const {Header, Content, Footer} = Layout;
-const TabPane = Tabs.TabPane;
+const {Content, Footer} = Layout;
 
 class App extends Component {
     constructor(props) {
@@ -14,21 +12,42 @@ class App extends Component {
             subreddit: 'popular',
             sortBy: 'new',
             random: '',
-            pagination: {},
+            after: '',
+            before: '',
+            count: 0,
         };
     }
 
     callback(e) {
-        let subreddit = this.state.subreddit;
         let sortBy = 'hot';
-        if (e.key == 3) {
+        if (e.key === '3') {
             sortBy = 'top';
-        } else if (e.key == 2) {
+        } else if (e.key === '2') {
             sortBy = 'new';
         }
         this.setState({sortBy: sortBy}, () => {
             this.getTableData()
         })
+    }
+
+    viewMore(param) {
+        let subreddit = this.state.subreddit;
+        let viewMoreUrl = '';
+        if (param === "after") {
+            viewMoreUrl = "https://www.reddit.com/r/" + subreddit + "/hot.json?sort=hot&count=" + this.state.count + "&after=" + this.state.after;
+
+        } else if (param === "prev") {
+            viewMoreUrl = "https://www.reddit.com/r/" + subreddit + "/hot.json?sort=hot&count=" + this.state.count + "&before=" + this.state.before;
+        }
+        fetch(viewMoreUrl).then(res => res.json()).then((result) => {
+                this.setState({
+                    data: result.data.children,
+                    after: result.data.after != null ? result.data.after : '',
+                    before: result.data.before != null ? result.data.before : '',
+                    count: result.data.dist != null ? result.data.dist : 0,
+                })
+            }
+        )
     }
 
     getTableData() {
@@ -38,6 +57,9 @@ class App extends Component {
         fetch(url).then(res => res.json()).then((result) => {
                 this.setState({
                     data: result.data.children,
+                    after: result.data.after != null ? result.data.after : '',
+                    before: result.data.before != null ? result.data.before : '',
+                    count: result.data.dist != null ? result.data.dist : 0,
                 })
             }
         )
@@ -45,16 +67,16 @@ class App extends Component {
 
     callbackMenu(e) {
         let subreddit = this.state.subreddit;
-        if (e.key == 1) {
+        if (e.key === '1') {
             this.setState({subreddit: 'popular'}, () => {
                 this.getTableData()
             })
         }
-        else if (e.key == 2) {
+        else if (e.key === '2') {
             this.setState({subreddit: 'all'}, () => {
                 this.getTableData()
             })
-        } else if (e.key == 3) {
+        } else if (e.key === '3') {
             //get random subreddit
             let url4Random = "https://www.reddit.com/r/all/random.json";
             fetch(url4Random).then(res => res.json()).then((result) => {
@@ -121,7 +143,15 @@ class App extends Component {
                             <Menu.Item key="2"><Link to={"/r/" + this.state.subreddit + "/new"}>New</Link></Menu.Item>
                             <Menu.Item key='3'><Link to={"/r/" + this.state.subreddit + "/top"}>Top</Link></Menu.Item>
                         </Menu>
-                        <Table showHeader={false} columns={columns} pagination={this.state.pagination} dataSource={this.state.data}/>
+                        <Table showHeader={false} pagination={false} columns={columns} dataSource={this.state.data}/>
+                        <div style={{padding: '10px'}}>
+                            view more:
+                            {this.state.before !== '' ?
+                                <span><button onClick={this.viewMore.bind(this, "prev")}><a>‹ prev</a></button> |
+                                </span> : ''}
+                            <span> </span>
+                            <button onClick={this.viewMore.bind(this, "after")}><a>next ›</a></button>
+                        </div>
                     </div>
                 </Content>
                 <Footer style={{textAlign: 'center'}}>
@@ -135,7 +165,7 @@ class App extends Component {
     componentDidMount() {
         const {params} = this.props.match
         let subreddit = this.state.subreddit;
-        if (params.id != undefined) {
+        if (params.id !== undefined) {
             subreddit = params.id;
             this.setState({subreddit: subreddit})
         }
@@ -143,6 +173,9 @@ class App extends Component {
         fetch(mainLink).then(res => res.json()).then((result) => {
                 this.setState({
                     data: result.data.children,
+                    after: result.data.after != null ? result.data.after : '',
+                    before: result.data.before != null ? result.data.before : '',
+                    count: result.data.dist != null ? result.data.dist : 0,
                 })
             }
         )
